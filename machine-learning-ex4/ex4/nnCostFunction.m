@@ -84,7 +84,9 @@ J = 0;
 for i = 1:size(X,1)
   J = J + (-y(i,:)*log(a3(i,:))'-(1-y(i,:))*log(1-a3(i,:))');
 endfor
-J = J/m;
+J = J/m + lambda/(2*m)*(sum(Theta1(:,2:end)(:).^2) + sum(Theta2(:,2:end)(:).^2)) ;
+
+
 
 % ===== PART 2 =====
 
