@@ -64,14 +64,12 @@ Theta2_grad = zeros(size(Theta2));
 
 % ===== PART 1 =====
 % Add column of 1's to X
-X = [ones(size(X, 1), 1) X];
+X = [ones(m, 1) X];
 
 % Recode the labels into vectors
-y = [y zeros(size(y, 1), num_labels - 1)];
-for i = 1:size(y,1)
-  label = y(i);
-  y(i, 1) = 0; 
-  y(i, label) = 1;
+y = [y zeros(m, num_labels - 1)];
+for i = 1:m
+  y(i,:) = ([1:num_labels] == y(i,1));
 endfor
 
 z2 = X * Theta1';
@@ -81,16 +79,29 @@ z3 = a2 * Theta2';
 a3 = sigmoid(z3);
 
 J = 0;
-for i = 1:size(X,1)
+for i = 1:m
   J = J + (-y(i,:)*log(a3(i,:))'-(1-y(i,:))*log(1-a3(i,:))');
 endfor
 J = J/m + lambda/(2*m)*(sum(Theta1(:,2:end)(:).^2) + sum(Theta2(:,2:end)(:).^2)) ;
 
 
-
 % ===== PART 2 =====
+a_1 = X;
 
+z_2 = a_1 * Theta1';
+a_2 = [ones(size(z_2,1),1) sigmoid(z_2)];
 
+z_3 = a_2 * Theta2';
+a_3 = sigmoid(z_3);
+
+d_3 = a_3 - y;
+d_2 = (d_3 * Theta2(:,2:end)) .* sigmoidGradient(z_2);
+
+Theta1_grad = Theta1_grad + d_2'*a_1;
+Theta2_grad = Theta2_grad + d_3'*a_2;
+
+Theta1_grad = Theta1_grad/m;
+Theta2_grad = Theta2_grad/m;
 
 % -------------------------------------------------------------
 
